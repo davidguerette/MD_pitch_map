@@ -2,9 +2,10 @@
 Module for building Machinedrum pitch map JSON
 Handles the lifting of matching up pitch values (per machine) with corresponding notes
 '''
+import json
 
 class BuildMDPitchMapError(Exception):
-    ''' raise custom exceptions for BuildMDPitchMap '''
+    ''' Raise custom exceptions for BuildMDPitchMap '''
     pass
 
 class BuildMDPitchMap():
@@ -33,6 +34,10 @@ class BuildMDPitchMap():
         return machine_note_range
 
     def build_machine_pitch_map(self, input_data):
+        ''' The brains of the pitch map builder:
+            Does the work of matching notes with corresponding values, building data structure,
+            and outputting json
+        '''
         return_dict = {}
 
         for machine in input_data:
@@ -58,7 +63,17 @@ class BuildMDPitchMap():
                 raise BuildMDPitchMapError("Cannot create {0} pitch map due to length discrepancy"\
                     " between note range and input pitch lists".format(machine_name))
 
-        return return_dict
+        return self.to_json(return_dict)
+
+    def to_json(self, data_dict):
+        ''' convert dict to json (with pretty print) '''
+        return json.dumps(data_dict, indent=4, sort_keys=True)
+
+    def create_json_file(self, file_name, json):
+        ''' writes json data to to file '''
+
+        with open(file_name, 'w') as f:
+            f.write(json)
 
 if __name__ == '__main__':
     # pitch map data source: http://www.elektronauts.com/topics/view/8643/69758/page:1#69758
@@ -95,5 +110,8 @@ if __name__ == '__main__':
 
     # build pitch map
     builder = BuildMDPitchMap()
-    builder.build_machine_pitch_map(builder_data)
+    pitch_map = builder.build_machine_pitch_map(builder_data)
+
+    # write to json file
+    builder.create_json_file('md_pitch_map.json', pitch_map)
 
