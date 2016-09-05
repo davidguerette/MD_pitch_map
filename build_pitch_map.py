@@ -58,7 +58,7 @@ class BuildMDPitchMap():
                     return_dict[machine_group] = {}
 
                 if not machine_name in return_dict[machine_group]:
-                    return_dict[machine_group][machine_name] = list(machine_pitch_map)
+                    return_dict[machine_group][machine_name] = dict(machine_pitch_map)
             else:
                 raise BuildMDPitchMapError("Cannot create {0} pitch map due to length discrepancy"\
                     " between note range and input pitch lists".format(machine_name))
